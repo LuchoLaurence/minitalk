@@ -1,48 +1,68 @@
-CLIENT = client.c
-SERVER = server.c
-CLIENT_NAME = client
-SERVER_NAME = server
+GCC = gcc -Wall -Wextra -Werror
+HEAD = -I ./minitalk.h
 
-CLIENT_B = client_bonus.c
-SERVER_B = server_bonus.c
-CLIENT_NAME_B = client_bonus
-SERVER_NAME_B = server_bonus
+NAME = server 
+NAMEC = client
 
-CC = gcc
+NAMEB = serverbonus 
+NAMECB = clientbonus
 
-FLAGS = -Wall -Wextra -Werror
+SRCS_C = ./client.c ./utils.c\
 
-RM = rm -rf
+SRCS_S = ./server.c ./utils.c\
 
-# ******************************** MAIN PART ******************************** #
+SRCS_CB = ./client_bonus.c ./utils.c\
 
-all:  ${SERVER_NAME} ${CLIENT_NAME} ${SERVER} ${CLIENT}
+SRCS_SB = ./server_bonus.c ./utils.c\
 
-$(SERVER_NAME) : $(SERVER)
-	$(CC) $(CFLAGS) utils.c $(SERVER) -o $(SERVER_NAME)
+OBJS_C = ${SRCS_C:%.c=objets/%.o}
+OBJS_S = ${SRCS_S:%.c=objets/%.o}
 
-$(CLIENT_NAME) : $(CLIENT_B)
-	$(CC) $(CFLAGS) utils.c $(CLIENT) -o $(CLIENT_NAME)
+OBJS_CB = ${SRCS_CB:%.c=objets/%.o}
+OBJS_SB = ${SRCS_SB:%.c=objets/%.o}
 
-# ******************************** BONUS PART ******************************** #
+all : ${NAME}
 
-all bonus: ${SERVER_NAME_B} ${CLIENT_NAME_B} ${SERVER_B} ${CLIENT_B}
+${NAME} : ${OBJS_S} ${OBJS_C}
+	make -C libft
+	$(GCC) $(HEAD)  ${OBJS_S} -o ${NAME}
+	$(GCC) $(HEAD)  ${OBJS_C} -o ${NAMEC}
+	@echo "Server and Client are ready! 👌"
 
-$(SERVER_NAME_B) : $(SERVER_B)
-	$(CC) $(CFLAGS) utils.c $(SERVER_B) -o $(SERVER_NAME_B)
+objets/%.o : %.c
+	mkdir -p objets
+	$(GCC) $(HEAD) -c $< -o $@
 
-$(CLIENT_NAME_B) : $(CLIENT_B)
-	$(CC) $(CFLAGS) utils.c $(CLIENT_B) -o $(CLIENT_NAME_B)
+clean :
+	rm -rf objets
+	@echo "clean objects 🗑️"
 
-# ********************************** RULES ********************************** #
+fclean : clean
+	rm -f ${NAMEC} ${NAME}
+	@echo "clean all names and objects 🗑️"
 
-clean:
-	rm -rf
+re : fclean all
 
-fclean: clean
-	rm -rf server client
-	rm -rf server_bonus client_bonus
+bonus : ${NAMEB}
 
-re: fclean all
+${NAMEB} : ${OBJS_SB} ${OBJS_CB}
+	make -C libft
+	$(GCC) $(HEAD) ${OBJS_SB} -o ${NAMEB}
+	$(GCC) $(HEAD) ${OBJS_CB} -o ${NAMECB}
+	@echo "Server and Client are ready! 👌"
 
-.PHONY:	all clean fclean re bonus
+objets/%.o : %.c
+	mkdir -p objets
+	$(GCC) $(HEAD) -c $< -o $@
+
+cleanbonus :
+	rm -rf objets
+	@echo "clean objects BONUS 🗑️"
+
+fcleanbonus : cleanbonus
+	rm -f ${NAMECB} ${NAMEB}
+	@echo "clean all names and objects BONUS 🗑️"
+
+rebonus : fcleanbonus bonus
+
+.PHONY: all clean fclean re

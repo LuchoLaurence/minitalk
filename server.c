@@ -6,18 +6,36 @@
 /*   By: llaurenc <llaurenc@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:20:43 by llaurenc          #+#    #+#             */
-/*   Updated: 2023/05/15 10:48:32 by llaurenc         ###   ########.fr       */
+/*   Updated: 2023/05/23 13:55:19 by llaurenc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
+void	get_bits(int sig, siginfo_t *info, void *oldact)
+{
+	static int		c = 0;
+	static int		bit = 7;
+
+	if (sig == SIGUSR1)
+		c += 1 << bit;
+	bit--;
+	if (bit == -1)
+	{
+		write(1, &c, 1);
+		bit = 7;
+		c = 0;
+	}
+	kill(info->si_pid, SIGUSR2);
+	(void)oldact;
+}
+
 int	main(void)
 {
 	struct sigaction	sig;
 
-	sig.sa_handler = get_bits;
-	sig.sa_flags = 0;
+	sig.sa_sigaction = get_bits;
+	sig.sa_flags = SA_SIGINFO;
 	write(1, "Server PID : \n", 13);
 	ft_putnbr(getpid());
 	write(1, "\n", 1);

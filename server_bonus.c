@@ -6,7 +6,7 @@
 /*   By: llaurenc <llaurenc@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:49:58 by llaurenc          #+#    #+#             */
-/*   Updated: 2023/05/15 12:03:17 by llaurenc         ###   ########.fr       */
+/*   Updated: 2023/05/23 11:58:30 by llaurenc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void	get_bits_bonus(int sig, siginfo_t *info, void *oldact)
 		bit = 7;
 		c = 0;
 	}
+	kill(info->si_pid, SIGUSR2);
 	(void)oldact;
 }
 

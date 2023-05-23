@@ -6,7 +6,7 @@
 /*   By: llaurenc <llaurenc@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 09:45:25 by llaurenc          #+#    #+#             */
-/*   Updated: 2023/05/15 12:03:02 by llaurenc         ###   ########.fr       */
+/*   Updated: 2023/05/23 13:52:34 by llaurenc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,36 +49,4 @@ void	ft_putnbr(int num)
 		ft_putnbr(num / 10);
 	c = 48 + (num % 10);
 	write(1, &c, 1);
-}
-
-void	send_bits(int pid, char c)
-{
-	int		i;
-
-	i = 7;
-	while (i >= 0)
-	{
-		if ((c >> i) & 1)
-			kill(pid, SIGUSR1);
-		else
-			kill(pid, SIGUSR2);
-		usleep(100);
-		i--;
-	}
-}
-
-void	get_bits(int sig)
-{
-	static int		c = 0;
-	static int		bit = 7;
-
-	if (sig == SIGUSR1)
-		c += 1 << bit;
-	bit--;
-	if (bit == -1)
-	{
-		write(1, &c, 1);
-		bit = 7;
-		c = 0;
-	}
 }
